@@ -1,29 +1,30 @@
-//Selectors
-const btn = document.querySelector('#generate');
-const avatar = document.querySelector('.rounded-full');
-const user = document.querySelector('#user');
+function init() {
+    //Selectors
+    const btn = document.querySelector('#generate');
+    const avatar = document.querySelector('.rounded-full');
+    const user = document.querySelector('#user');
+    //Events
+    btn.addEventListener('click',fetchUser);
 
-//Events
-btn.addEventListener('click',fetchUser);
-
+    fetchUser();
+}
 //GET request to the random user API
-function fetchUser() {
+const fetchUser = async () => {
     showSpinner();
-    fetch('https://randomuser.me/api')
-    .then((res) => {
-        if(!res.ok) {
+    try{
+        const res = await fetch('https://randomuser.me/api');
+        if (!res.ok) {
             throw new Error('Request Failed');
         }
-        return res.json();
-    })
-    .then((user) => {
+        const user = await res.json();
         hideSpinner();
         userInfo(user.results[0]);
-    })
-    .catch((err) => {
+        return user;
+    }
+    catch (err) {
         hideSpinner();
         user.innerHTML = `<p class="text-xl text-red-500 text-center mb-5">${err}</p>`;
-    });
+    }
 }
 
 //gets the detailed information of the returned random user on calling the API
@@ -65,4 +66,4 @@ function hideSpinner() {
     document.querySelector('.spinner').style.display = 'none';
 }
 
-fetchUser();
+init()
