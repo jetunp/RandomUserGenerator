@@ -1,6 +1,7 @@
 //Selectors
 const btn = document.querySelector('#generate');
 const avatar = document.querySelector('.rounded-full');
+const user = document.querySelector('#user');
 
 //Events
 btn.addEventListener('click',fetchUser);
@@ -9,10 +10,19 @@ btn.addEventListener('click',fetchUser);
 function fetchUser() {
     showSpinner();
     fetch('https://randomuser.me/api')
-    .then((res) => res.json())
+    .then((res) => {
+        if(!res.ok) {
+            throw new Error('Request Failed');
+        }
+        return res.json();
+    })
     .then((user) => {
         hideSpinner();
         userInfo(user.results[0]);
+    })
+    .catch((err) => {
+        hideSpinner();
+        user.innerHTML = `<p class="text-xl text-red-500 text-center mb-5">${err}</p>`;
     });
 }
 
